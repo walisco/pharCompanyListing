@@ -1,7 +1,7 @@
 const assert = require("assert");
 const fs = require('fs');
 const download = require('images-downloader').images;
-const mkdirp = require('mkdirp');
+const path = require('path');
 
 describe("check page title", () => {
     it("should have the correct title", () => {
