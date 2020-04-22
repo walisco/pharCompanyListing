@@ -27,9 +27,6 @@ describe("Browse pharmaceutical company names", () => {
       for (j = 0; j < listingName.length; j++) {
         if (listingName[j].index == 0) {
           listingName[j].click();
-         
-
-
           for(k=0; k < $$('.gfdCompanyDetailsTitle').length; k++) {
             let key = $$('.gfdCompanyDetailsTitle')[k].getText()
             let value = $$('p')[k].getText();
