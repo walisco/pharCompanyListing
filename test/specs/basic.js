@@ -1,5 +1,12 @@
 const assert = require("assert");
 
+describe("check page title", () => {
+    it("should have the correct title", () => {
+        browser.url("https://www.medicines.org.uk/emc/browse-companies/");
+        const title = browser.getTitle()
+        assert.strictEqual(title, 'Browse Pharmaceutical Company Names starting with A - (emc)')
+    })
+})
 describe("Browse pharmaceutical company names", () => {
   it("should find right companies", () => {
     browser.url("https://www.medicines.org.uk/emc/browse-companies/");
@@ -32,10 +39,5 @@ describe("Browse pharmaceutical company names", () => {
       }
     }
 
-    // companiesBeginingWith.forEach(compName => compName.click())
-    // listingName.forEach(compList => compList.click())
-
-    // const title = browser.getTitle()
-    // assert.strictEqual(title, 'WebdriverIO · Next-gen browser automation test framework for Node.js')
   });
 });
