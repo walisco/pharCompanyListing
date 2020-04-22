@@ -16,12 +16,6 @@ describe("Browse pharmaceutical company names", () => {
     browser.url("https://www.medicines.org.uk/emc/browse-companies/");
     const companiesBeginingWith = $$("ul.browse li a");
     const listingName = $$("a.key");
-    const contactInfo = $$('.gfdCompanyDetailsCol');
-    const companyDetail = $$('p');
-    const comDetails = $$('.gfdCompanyDetailsTitle +div p')
-    const tableHeader = $$('.gfdCompanyDetailsCol div');
-    const companyHeader = $$('.gfdCompanyDetailsTitle');
-    const companyLogo = $$('.companyLogoWrapper img')[0];
     let jsonStr = {}
     let obj = []
 
@@ -30,28 +24,14 @@ describe("Browse pharmaceutical company names", () => {
       for (j = 0; j < listingName.length; j++) {
         if (listingName[j].index == 0) {
           listingName[j].click();
-          for(k=0; k < $$('.gfdCompanyDetailsTitle').length; k++) {
-            let key = $$('.gfdCompanyDetailsTitle')[k].getText()
-            let value = $$('p')[k].getText();
-            jsonStr = "{"+'"'+key+'":'+'"'+value+'"'+"}";
-            let temp =JSON.parse(JSON.stringify(jsonStr))
-            obj.push(temp)
-            // console.log(obj)
-            saveJSONToFile(obj);
-        
-           
-          const dest = 'output/companyLogos'
-
-          // An array of image(s) to download
-          const images = [$$('.companyLogoWrapper img')[0].getAttribute('src')]
-          saveCompanyLogos(images, dest);
-          }
-         
+          jsonStr = saveCompanyInformationAsJsonAndCompanyLogos(jsonStr, obj);
           browser.back();
         }
       
         if (listingName[j].index == 2) {
           listingName[j].click();
+          jsonStr = saveCompanyInformationAsJsonAndCompanyLogos(jsonStr, obj);
+          
           browser.back();
         }
        /*  if (listingName[j].index == listingName.length) {
@@ -63,6 +43,24 @@ describe("Browse pharmaceutical company names", () => {
 
   });
 });
+function saveCompanyInformationAsJsonAndCompanyLogos(jsonStr, obj) {
+  for (k = 0; k < $$('.gfdCompanyDetailsTitle').length; k++) {
+    let company = $('h1').getText()
+    let key = $$('.gfdCompanyDetailsTitle')[k].getText();
+    let value = $$('p')[k].getText();
+    jsonStr = "{"+'"'+company+'"'+":["+"{" + '"' + key + '":' + '"' + value + '"' + "}]}";
+    let temp = JSON.parse(JSON.stringify(jsonStr));
+    obj.push(temp);
+    // console.log(obj)
+    saveJSONToFile(obj);
+    const dest = 'output/companyLogos';
+    // An array of image(s) to download
+    const images = [$$('.companyLogoWrapper img')[0].getAttribute('src')];
+    saveCompanyLogos(images, dest);
+  }
+  return jsonStr;
+}
+
 function saveCompanyLogos(images, dest) {
   download(images, dest)
     .then(result => {
