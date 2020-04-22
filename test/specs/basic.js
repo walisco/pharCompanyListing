@@ -5,6 +5,7 @@ describe("check page title", () => {
         browser.url("https://www.medicines.org.uk/emc/browse-companies/");
         const title = browser.getTitle()
         assert.strictEqual(title, 'Browse Pharmaceutical Company Names starting with A - (emc)')
+        
     })
 })
 describe("Browse pharmaceutical company names", () => {
@@ -15,20 +16,30 @@ describe("Browse pharmaceutical company names", () => {
     const contactInfo = $$('.gfdCompanyDetailsCol')
     const companyDetail = $$('p')
     const tableHeader = $$('.gfdCompanyDetailsCol div')
-    const obj = {}
+    let jsonStr = {}
+    let obj = []
 
-    for (i = 0; i < 1; i++) {
+    for (i = 0; i < 2; i++) {
       companiesBeginingWith[i].click();
       for (j = 0; j < listingName.length; j++) {
         if (listingName[j].index == 0) {
           listingName[j].click();
-          tableHeader.forEach(add => add.getText())
- 
+          companyDetail.forEach(add => jsonStr = "{["+"address:"+'"'+add.getText()+'"'+"}]");
+          let temp =JSON.parse(JSON.stringify(jsonStr))
+          obj.push(temp)
+          console.log("**", obj)
+          
+          
+          // tableHeader.forEach(add => add.getText())
+        
+
         //   companyDetail.forEach(add => console.log("***",add.getText()))
           browser.back();
         }
+      
         if (listingName[j].index == 2) {
           listingName[j].click();
+          // companyDetail.forEach(add => obj = JSON.parse("{["+"address:"+add.getText()+"}]"));
         //   contactInfo.forEach(contact => console.log("???",contact.getAttribute('innerText')))
           browser.back();
         }
