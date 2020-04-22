@@ -1,5 +1,7 @@
 const assert = require("assert");
 const fs = require('fs');
+const download = require('images-downloader').images;
+const mkdirp = require('mkdirp');
 
 describe("check page title", () => {
     it("should have the correct title", () => {
@@ -19,6 +21,7 @@ describe("Browse pharmaceutical company names", () => {
     const comDetails = $$('.gfdCompanyDetailsTitle +div p')
     const tableHeader = $$('.gfdCompanyDetailsCol div');
     const companyHeader = $$('.gfdCompanyDetailsTitle');
+    const companyLogo = $$('.companyLogoWrapper img')[0];
     let jsonStr = {}
     let obj = []
 
@@ -33,16 +36,15 @@ describe("Browse pharmaceutical company names", () => {
             jsonStr = "{"+'"'+key+'":'+'"'+value+'"'+"}";
             let temp =JSON.parse(JSON.stringify(jsonStr))
             obj.push(temp)
-            console.log("**", obj)
-
-            fs.writeFile ("company.json", obj, 'utf8', function (err) {
-              if (err) {
-                  console.log("An error occured while writing JSON Object to File.");
-                  return console.log(err);
-              }
+            // console.log(obj)
+            saveJSONToFile(obj);
+        
            
-              console.log("JSON file has been saved.");
-          });
+          const dest = 'output/companyLogos'
+
+          // An array of image(s) to download
+          const images = [$$('.companyLogoWrapper img')[0].getAttribute('src')]
+          saveCompanyLogos(images, dest);
           }
          
           browser.back();
@@ -61,3 +63,21 @@ describe("Browse pharmaceutical company names", () => {
 
   });
 });
+function saveCompanyLogos(images, dest) {
+  download(images, dest)
+    .then(result => {
+      console.log('Images downloaded', result);
+    })
+    .catch(error => console.log("downloaded error", error));
+}
+
+function saveJSONToFile(obj) {
+  fs.writeFile("company.json", obj, 'utf8', function (err) {
+    if (err) {
+      console.log("An error occured while writing JSON Object to File.");
+      return console.log(err);
+    }
+    console.log("JSON file has been saved.");
+  });
+}
+
